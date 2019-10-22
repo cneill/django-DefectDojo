@@ -10,7 +10,7 @@ setup(
     install_requires=[
         'Django==1.11.2',
         'MySQL-python',
-        'Pillow==4.1.1',
+        'Pillow==6.2.0',
         'django-secure>1.0',
         'django-tastypie>=0.12.2',
         'django-tastypie-swagger',
