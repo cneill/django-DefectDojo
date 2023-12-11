@@ -7,11 +7,11 @@ weight: 5
 
 ## Docker-compose
 
-When you deploy a vanilla docker-compose, it will create a persistent
-volume for your MySQL database. As long as your volume is there, you
+When you deploy a vanilla Docker-compose, it will create a persistent
+volume for your PostgreSQL database. As long as your volume is there, you
 should not lose any data.
 
-### Using docker images provided in DockerHub
+### Using Docker images provided in DockerHub
 
 {{% alert title="Information" color="info" %}}
 If you\'re using `latest`, then you need to pre pull the `latest` from
@@ -19,7 +19,7 @@ DockerHub to update.
 {{% /alert %}}
 
 
-The generic upgrade method for docker-compose are as follows:
+The generic upgrade method for docker-compose is as follows:
 -   Pull the latest version
 
     ``` {.sourceCode .bash}

@@ -15,7 +15,7 @@ All commands assume that you're located at the root of the django-DefectDojo clo
 - Checkout `dev` and make sure you're up to date with the latest changes.
 - It's advised that you create a dedicated branch for your development, such as `git checkout -b parser-name`.
 
-It is easiest to use the docker-compose deployment as it has hot-reload capbility for uWSGI.
+It is easiest to use the docker-compose deployment as it has hot-reload capability for uWSGI.
 Set up your environment to use the debug environment:
 
 `$ docker/setEnv.sh debug`
@@ -80,7 +80,7 @@ class MyToolParser(object):
         return False
 
     # mode:
-    # None (default): aggregates vulnerabilites per sink filename (legacy behavior)
+    # None (default): aggregates vulnerabilities per sink filename (legacy behavior)
     # 'detailed' : No aggregation
     mode = None
 
@@ -94,7 +94,7 @@ class MyToolParser(object):
 
 ## API Parsers
 
-DefectDojo has a limited number of API parsers. While we won’t remove these connectors, adding API connectors has been problematic and thus we cannot accept new API parsers / connectors from the community at this time for supportability reasonsing. To maintain a high quality API connector, it is necessary to have a license to the tool. To get that license requires partnership with the author or vendor. We're close to announcing a new program to help address this and bring API connectors to DefectDojo.
+DefectDojo has a limited number of API parsers. While we won’t remove these connectors, adding API connectors has been problematic and thus we cannot accept new API parsers / connectors from the community at this time for supportability reasons. To maintain a high quality API connector, it is necessary to have a license to the tool. To get that license requires partnership with the author or vendor. We're close to announcing a new program to help address this and bring API connectors to DefectDojo.
 
 ## Template Generator
 
@@ -292,14 +292,14 @@ for finding in findings:
 ### Tests API Parsers
 
 Not only parser but also importer should be tested.
-`patch` method from `unittest.mock` is usualy usefull for simulating API responses.
+`patch` method from `unittest.mock` is usually useful for simulating API responses.
 It is highly recommeded to use it.
 
 ## Other files that could be involved
 
 ### Change to the model
 
-In the event where you'd have to change the model, e.g. to increase a database column size to accomodate a longer string of data to be saved
+In the event where you'd have to change the model, e.g. to increase a database column size to accommodate a longer string of data to be saved
 * Change what you need in `dojo/models.py`
 * Create a new migration file in dojo/db_migrations by running and including as part of your PR
 

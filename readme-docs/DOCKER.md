@@ -46,6 +46,9 @@ e.g.
 ./dc-up.sh mysql-redis
 ```
 
+**NOTE:** We will be removing the `mysql-*` and `*-rabbitmq` profiles in the future, and we do not recommend creating
+new instances with these profiles.
+
 A default profile can be set with the environment variable `DD_PROFILE`. If this environment variable is set when starting the containers, the parameter for the profile needs not to be given for the start scripts.
 
 When DD_PROFILE or command-line profile is not specified, the command will run "postgres-redis" as the default profile. 
@@ -128,7 +131,7 @@ This will run the application based on merged configurations from docker-compose
 docker-compose restart celeryworker
 ```
 
-*  The mysql port is forwarded to the host so that you can access your database from outside the container.
+*  The database port is forwarded to the host so that you can access your database from outside the container.
 
 To update changes in static resources, served by nginx, just refresh the browser with ctrl + F5.
 

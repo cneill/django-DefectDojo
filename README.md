@@ -62,6 +62,9 @@ cd django-DefectDojo
 docker compose logs initializer | grep "Admin password:"
 ```
 
+**NOTE:** We will be removing the `mysql-*` and `*-rabbitmq` profiles in the future, and we do not recommend creating
+new instances with these profiles.
+
 ## For Docker Compose V1
 
 You can run Compose V1 by editing the files below to add the hyphen (-) between `docker compose`. 
