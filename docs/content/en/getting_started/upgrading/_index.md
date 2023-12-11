@@ -7,7 +7,7 @@ weight: 5
 
 ## Docker-compose
 
-When you deploy a vanilla Docker-compose, it will create a persistent
+When you deploy a vanilla docker-compose, it will create a persistent
 volume for your PostgreSQL database. As long as your volume is there, you
 should not lose any data.
 
