@@ -333,7 +333,7 @@ class DojoDefaultReImporter(object):
                     item.date = scan_date.date()
 
                 # Save it. Don't dedupe before endpoints are added.
-                item.save(dedupe_option=False)
+                item.save(dedupe_option=False, user=user)
                 logger.debug(
                     "%i: reimport created new finding as no existing finding match: %i:%s:%s:%s",
                     i,
