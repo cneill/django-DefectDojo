@@ -215,7 +215,7 @@ class DojoDefaultReImporter(object):
                                 )
                                 note.save()
                                 finding.notes.add(note)
-                                finding.save(dedupe_option=False)
+                                finding.save(dedupe_option=False, user=user)
                             continue
                     # existing findings may be from before we had component_name/version fields
                     finding.component_name = (
@@ -230,7 +230,7 @@ class DojoDefaultReImporter(object):
                     )
 
                     # don't dedupe before endpoints are added
-                    finding.save(dedupe_option=False)
+                    finding.save(dedupe_option=False, user=user)
                     note = Notes(
                         entry="Re-activated by %s re-upload." % scan_type, author=user
                     )
@@ -307,7 +307,7 @@ class DojoDefaultReImporter(object):
                             if finding.component_version
                             else component_version
                         )
-                        finding.save(dedupe_option=False)
+                        finding.save(dedupe_option=False, user=user)
 
                 if finding.dynamic_finding:
                     logger.debug(
@@ -428,9 +428,9 @@ class DojoDefaultReImporter(object):
                 # finding = new finding or existing finding still in the upload report
                 # to avoid pushing a finding group multiple times, we push those outside of the loop
                 if is_finding_groups_enabled() and group_by:
-                    finding.save()
+                    finding.save(user=user)
                 else:
-                    finding.save(push_to_jira=push_to_jira)
+                    finding.save(push_to_jira=push_to_jira, user=user)
 
         to_mitigate = (
             set(original_items) - set(reactivated_items) - set(unchanged_items)
@@ -529,9 +529,9 @@ class DojoDefaultReImporter(object):
                 # to avoid pushing a finding group multiple times, we push those outside of the loop
                 if is_finding_groups_enabled() and finding.finding_group:
                     # don't try to dedupe findings that we are closing
-                    finding.save(dedupe_option=False)
+                    finding.save(dedupe_option=False, user=user)
                 else:
-                    finding.save(push_to_jira=push_to_jira, dedupe_option=False)
+                    finding.save(push_to_jira=push_to_jira, dedupe_option=False, user=user)
 
                 note = Notes(
                     entry="Mitigated by %s re-upload." % test.test_type, author=user
