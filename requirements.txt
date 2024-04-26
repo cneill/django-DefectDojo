@@ -43,7 +43,7 @@ urllib3==1.26.18
 uWSGI==2.0.25.1
 vobject==0.9.7
 titlecase==2.4.1
-social-auth-app-django==5.4.1
+social-auth-app-django==5.4.1 # Used in INSTALLED_APPS.
 social-auth-core==4.5.4
 Python-jose==3.3.0
 gitpython==3.1.43
