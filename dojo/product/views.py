@@ -515,10 +515,10 @@ def view_product_metrics(request, pid):
 
     explicit_logger('Zero Level Severities Pulled')
 
-    all_findings = list(filters.get("all"))
-    open_findings = list(filters.get("open"))
-    closed_findings = list(filters.get("closed"))
-    accepted_findings = list(filters.get("accepted"))
+    all_findings = list(filters.get("all", []))
+    open_findings = list(filters.get("open", []))
+    closed_findings = list(filters.get("closed", []))
+    accepted_findings = list(filters.get("accepted", []))
 
     explicit_logger('Findings querysets generated before nasty for loop')
 
@@ -617,32 +617,41 @@ def view_product_metrics(request, pid):
 
     explicit_logger('Starting render')
 
+    explicit_logger('List-ifying filters for render()')
+
+    verified_findings = list(filters.get('verified', []))
+    inactive_findings = list(filters.get('inactive', []))
+    false_positive_findings = list(filters.get('false_positive', []))
+    out_of_scope_findings = list(filters.get('out_of_scope', []))
+    new_verified_findings = list(filters.get('new_verified', []))
+    form_findings = list(filters.get('form', []))
+
     return render(request, 'dojo/product_metrics.html', {
         'prod': prod,
         'product_tab': product_tab,
         'engs': engs,
         'inactive_engs': inactive_engs_page,
         'view': view,
-        'verified_objs': filters.get('verified', None),
-        'verified_objs_by_severity': sum_by_severity_level(filters.get('verified')),
-        'open_objs': filters.get('open', None),
+        'verified_objs': verified_findings,
+        'verified_objs_by_severity': sum_by_severity_level(verified_findings),
+        'open_objs': open_findings,
         'open_objs_by_severity': open_objs_by_severity,
         'open_objs_by_age': open_objs_by_age,
-        'inactive_objs': filters.get('inactive', None),
-        'inactive_objs_by_severity': sum_by_severity_level(filters.get('inactive')),
-        'closed_objs': filters.get('closed', None),
+        'inactive_objs': inactive_findings,
+        'inactive_objs_by_severity': sum_by_severity_level(inactive_findings),
+        'closed_objs': closed_findings,
         'closed_objs_by_severity': closed_objs_by_severity,
-        'false_positive_objs': filters.get('false_positive', None),
-        'false_positive_objs_by_severity': sum_by_severity_level(filters.get('false_positive')),
-        'out_of_scope_objs': filters.get('out_of_scope', None),
-        'out_of_scope_objs_by_severity': sum_by_severity_level(filters.get('out_of_scope')),
-        'accepted_objs': filters.get('accepted', None),
+        'false_positive_objs': false_positive_findings,
+        'false_positive_objs_by_severity': sum_by_severity_level(false_positive_findings),
+        'out_of_scope_objs': out_of_scope_findings,
+        'out_of_scope_objs_by_severity': sum_by_severity_level(out_of_scope_findings),
+        'accepted_objs': accepted_findings,
         'accepted_objs_by_severity': accepted_objs_by_severity,
-        'new_objs': filters.get('new_verified', None),
-        'new_objs_by_severity': sum_by_severity_level(filters.get('new_verified')),
-        'all_objs': filters.get('all', None),
-        'all_objs_by_severity': sum_by_severity_level(filters.get('all')),
-        'form': filters.get('form', None),
+        'new_objs': new_verified_findings,
+        'new_objs_by_severity': sum_by_severity_level(new_verified_findings),
+        'all_objs': all_findings,
+        'all_objs_by_severity': sum_by_severity_level(all_findings),
+        'form': form_findings,
         'reset_link': reverse('view_product_metrics', args=(prod.id,)) + '?type=' + view,
         'open_vulnerabilities': open_vulnerabilities,
         'all_vulnerabilities': all_vulnerabilities,
