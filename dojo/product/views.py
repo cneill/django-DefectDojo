@@ -492,14 +492,19 @@ def view_product_metrics(request, pid):
     closed_objs_by_severity = get_zero_severity_level()
     accepted_objs_by_severity = get_zero_severity_level()
 
-    for finding in filters.get("all", []):
+    all_findings = list(filters.get("all"))
+    open_findings = list(filters.get("open"))
+    closed_findings = list(filters.get("closed"))
+    accepted_findings = list(filters.get("accepted"))
+
+    for finding in all_findings:
         iso_cal = finding.date.isocalendar()
         date = iso_to_gregorian(iso_cal[0], iso_cal[1], 1)
         html_date = date.strftime("<span class='small'>%m/%d<br/>%Y</span>")
         unix_timestamp = (tcalendar.timegm(date.timetuple()) * 1000)
 
         # Open findings
-        if finding in filters.get("open", []):
+        if finding in open_findings:
             if unix_timestamp not in critical_weekly:
                 critical_weekly[unix_timestamp] = {'count': 0, 'week': html_date}
             if unix_timestamp not in high_weekly:
@@ -547,7 +552,7 @@ def view_product_metrics(request, pid):
             if open_objs_by_severity.get(finding.severity) is not None:
                 open_objs_by_severity[finding.severity] += 1
         # Close findings
-        if finding in filters.get("closed", []):
+        if finding in closed_findings:
             if unix_timestamp in open_close_weekly:
                 open_close_weekly[unix_timestamp]['closed'] += 1
             else:
@@ -557,7 +562,7 @@ def view_product_metrics(request, pid):
             if closed_objs_by_severity.get(finding.severity) is not None:
                 closed_objs_by_severity[finding.severity] += 1
         # Risk Accepted findings
-        if finding in filters.get("accepted", []):
+        if finding in accepted_findings:
             if unix_timestamp in open_close_weekly:
                 open_close_weekly[unix_timestamp]['accepted'] += 1
             else:
@@ -576,7 +581,7 @@ def view_product_metrics(request, pid):
 
     product_tab = Product_Tab(prod, title=_("Product"), tab="metrics")
 
-    open_objs_by_age = {x: len([_ for _ in filters.get('open') if _.age == x]) for x in set([_.age for _ in filters.get('open')])}
+    open_objs_by_age = {x: len([_ for _ in open_findings if _.age == x]) for x in set([_.age for _ in open_findings])}
 
     return render(request, 'dojo/product_metrics.html', {
         'prod': prod,
