@@ -626,6 +626,8 @@ def view_product_metrics(request, pid):
     new_verified_findings = list(filters.get('new_verified', []))
     form_findings = list(filters.get('form', []))
 
+    explicit_logger('Done list-ifying filters for render(), starting render()')
+
     return render(request, 'dojo/product_metrics.html', {
         'prod': prod,
         'product_tab': product_tab,
