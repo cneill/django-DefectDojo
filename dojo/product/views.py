@@ -522,6 +522,9 @@ def view_product_metrics(request, pid):
 
     explicit_logger('Findings querysets generated before nasty for loop')
 
+    open_objs_by_age = {}
+
+
     for finding in all_findings:
         iso_cal = finding.date.isocalendar()
         date = iso_to_gregorian(iso_cal[0], iso_cal[1], 1)
@@ -576,6 +579,14 @@ def view_product_metrics(request, pid):
             # Optimization: count severity level on server side
             if open_objs_by_severity.get(finding.severity) is not None:
                 open_objs_by_severity[finding.severity] += 1
+
+            ## CHANGES FOR AGE ##
+            age = finding.age
+            if open_objs_by_age.get(age):
+                open_objs_by_age[age] += 1
+            else:
+                open_objs_by_age[age] = 1
+            ## END CHANGES FOR AGE ##
         # Close findings
         if finding in closed_findings:
             if unix_timestamp in open_close_weekly:
@@ -611,9 +622,9 @@ def view_product_metrics(request, pid):
 
     product_tab = Product_Tab(prod, title=_("Product"), tab="metrics")
 
-    explicit_logger('Start of open objs garbage')
-    open_objs_by_age = {x: len([_ for _ in open_findings if _.age == x]) for x in set([_.age for _ in open_findings])}
-    explicit_logger('End of open objs garbage')
+    # explicit_logger('Start of open objs garbage')
+    # open_objs_by_age = {x: len([_ for _ in open_findings if _.age == x]) for x in set([_.age for _ in open_findings])}
+    # explicit_logger('End of open objs garbage')
 
     explicit_logger('Starting render')
 
