@@ -444,11 +444,17 @@ def endpoint_querys(request, prod):
     return filters
 
 
+def explicit_logger(sssss):
+    print('\n' + str(sssss) + ' => ' + str(datetime.now()))
+
+
 @user_is_authorized(Product, Permissions.Product_View, 'pid')
 def view_product_metrics(request, pid):
     prod = get_object_or_404(Product, id=pid)
     engs = Engagement.objects.filter(product=prod, active=True)
     view = identify_view(request)
+
+    explicit_logger('Start of Product Metrics')
 
     result = EngagementFilter(
         request.GET,
@@ -456,20 +462,31 @@ def view_product_metrics(request, pid):
 
     inactive_engs_page = get_page_items(request, result.qs, 10)
 
+    explicit_logger('Inactive Engagements Page Items Loaded')
+
     filters = dict()
     if view == 'Finding':
         filters = finding_querys(request, prod)
     elif view == 'Endpoint':
         filters = endpoint_querys(request, prod)
 
+    explicit_logger('Finding Queries Loaded')
+
     start_date = filters['start_date']
     end_date = filters['end_date']
 
+    explicit_logger('Start Date =>' + str(start_date))
+    explicit_logger('End Date =>' + str(end_date))
+
     tests = Test.objects.filter(engagement__product=prod).prefetch_related('finding_set', 'test_type')
+    explicit_logger('Tests Query Made')
     tests = tests.annotate(verified_finding_count=Count('finding__id', filter=Q(finding__verified=True)))
+    explicit_logger('Tests Annotation Made')
 
     open_vulnerabilities = filters['open_vulns']
+    explicit_logger('Open Vulnerabilities Pulled From Filter')
     all_vulnerabilities = filters['all_vulns']
+    explicit_logger('All Vulnerabilities Pulled From Filter')
 
     start_date = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
     r = relativedelta(end_date, start_date)
@@ -477,7 +494,11 @@ def view_product_metrics(request, pid):
     if weeks_between <= 0:
         weeks_between += 2
 
+    explicit_logger('Weeks Between => ' + str(weeks_between))
+
     punchcard, ticks = get_punchcard_data(filters.get('open', None), start_date, weeks_between, view)
+
+    explicit_logger('Punchcard Data Loaded')
 
     add_breadcrumb(parent=prod, top_level=False, request=request)
 
@@ -492,10 +513,14 @@ def view_product_metrics(request, pid):
     closed_objs_by_severity = get_zero_severity_level()
     accepted_objs_by_severity = get_zero_severity_level()
 
+    explicit_logger('Zero Level Severities Pulled')
+
     all_findings = list(filters.get("all"))
     open_findings = list(filters.get("open"))
     closed_findings = list(filters.get("closed"))
     accepted_findings = list(filters.get("accepted"))
+
+    explicit_logger('Findings querysets generated before nasty for loop')
 
     for finding in all_findings:
         iso_cal = finding.date.isocalendar()
@@ -572,6 +597,9 @@ def view_product_metrics(request, pid):
             if accepted_objs_by_severity.get(finding.severity) is not None:
                 accepted_objs_by_severity[finding.severity] += 1
 
+    explicit_logger('End of MASSIVE for-loop...')
+
+    explicit_logger('Start of test_data for-loop...')
     test_data = {}
     for t in tests:
         if t.test_type.name in test_data:
@@ -579,9 +607,15 @@ def view_product_metrics(request, pid):
         else:
             test_data[t.test_type.name] = t.verified_finding_count
 
+    explicit_logger('End of test_data for-loop...')
+
     product_tab = Product_Tab(prod, title=_("Product"), tab="metrics")
 
+    explicit_logger('Start of open objs garbage')
     open_objs_by_age = {x: len([_ for _ in open_findings if _.age == x]) for x in set([_.age for _ in open_findings])}
+    explicit_logger('End of open objs garbage')
+
+    explicit_logger('Starting render')
 
     return render(request, 'dojo/product_metrics.html', {
         'prod': prod,
