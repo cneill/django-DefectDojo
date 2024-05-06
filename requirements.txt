@@ -58,8 +58,9 @@ packageurl-python==0.15.0
 django-crum==0.7.9
 JSON-log-formatter==1.0 # Optional, enables JSON log formatting with 'json_console' in DD_LOGGING_HANDLER.
 django-split-settings==1.3.1
+# Optional, see this comment about enabling the debug toolbar for DefectDojo.
+# https://github.com/DefectDojo/django-DefectDojo/blob/f66e6dbb07bcddfb607ab81e76cca073080a6c2b/dojo/settings/template-local_settings#L9-L14
 django-debug-toolbar==4.3.0
-django-debug-toolbar-request-history==0.1.4
 vcrpy==6.0.1
 vcrpy-unittest==0.1.7
 django-tagulous==1.3.3
