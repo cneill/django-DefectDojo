@@ -43,7 +43,6 @@ pytz==2024.1
 redis==5.0.4 # Required to use Redis as a Celery broker.
 requests==2.31.0
 sqlalchemy==2.0.30  # Required by Celery broker transport
-urllib3==1.26.18
 uWSGI==2.0.25.1
 vobject==0.9.7
 titlecase==2.4.1
