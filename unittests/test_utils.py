@@ -22,7 +22,7 @@ from dojo.models import (
     Test_Import,
     Test_Import_Finding_Action,
 )
-from dojo.utils import dojo_crypto_encrypt, prepare_for_view, user_post_save
+from dojo.utils import create_bleached_link, dojo_crypto_encrypt, prepare_for_view, user_post_save
 
 from .dojo_test_case import DojoTestCase
 
@@ -52,6 +52,31 @@ class TestUtils(DojoTestCase):
         encrypt = dojo_crypto_encrypt(test_input)
         test_output = prepare_for_view(encrypt)
         self.assertEqual(test_input, test_output)
+
+    def test_create_bleached_link(self):
+        # url, title, expected
+        unsafe_cases = [
+            (
+                '"><script>alert(1)</script>',
+                "test",
+                '<a href="">&lt;script&gt;alert(1)&lt;/script&gt;" target="_blank" title="test"&gt;test</a>',
+            ),
+            ('" onclick=alert(1)>', "test", '<a href="">" target="_blank" title="test"&gt;test</a>'),
+        ]
+        for i, unsafe in enumerate(unsafe_cases):
+            with self.subTest(i):
+                result = create_bleached_link(unsafe[0], unsafe[1])
+                self.assertEqual(unsafe[2], result)
+
+        # url, title, expected
+        safe_cases = [
+            ("https://myhost.com", "title", '<a href="https://myhost.com" target="_blank" title="title">title</a>'),
+            ("/", "title", '<a href="/" target="_blank" title="title">title</a>'),
+        ]
+        for i, safe in enumerate(safe_cases):
+            with self.subTest(len(unsafe_cases) + i):
+                result = create_bleached_link(safe[0], safe[1])
+                self.assertEqual(safe[2], result)
 
     @patch('dojo.models.System_Settings.objects')
     @patch('dojo.utils.Dojo_Group_Member')

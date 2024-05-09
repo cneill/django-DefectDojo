@@ -2067,14 +2067,8 @@ def get_current_request():
     return crum.get_current_request()
 
 
-def create_bleached_link(url, title):
-    link = '<a href=\"'
-    link += url
-    link += '\" target=\"_blank\" title=\"'
-    link += title
-    link += '\">'
-    link += title
-    link += '</a>'
+def create_bleached_link(url: str, title: str) -> str:
+    link = f'<a href="{url}" target="_blank" title="{title}">{title}</a>'
     return bleach.clean(link, tags={'a'}, attributes={'a': ['href', 'target', 'title']})
 
 
