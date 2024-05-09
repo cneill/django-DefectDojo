@@ -22,7 +22,7 @@ from dojo.models import (
     Test_Import,
     Test_Import_Finding_Action,
 )
-from dojo.utils import create_bleached_link, dojo_crypto_encrypt, prepare_for_view, user_post_save
+from dojo.utils import create_bleached_link, dojo_crypto_encrypt, is_safe_url, prepare_for_view, user_post_save
 
 from .dojo_test_case import DojoTestCase
 
@@ -77,6 +77,27 @@ class TestUtils(DojoTestCase):
             with self.subTest(len(unsafe_cases) + i):
                 result = create_bleached_link(safe[0], safe[1])
                 self.assertEqual(safe[2], result)
+
+    def test_is_safe_url(self):
+        # Because allowed_hosts=None only paths are allowed - no hosts, no schemes, etc.
+        unsafe_cases = [
+            "",
+            "ftp://myhost.com",
+            "ssh://myhost.com",
+            "///myhost.com",
+            "https://localhost/path",
+        ]
+        for i, unsafe in enumerate(unsafe_cases):
+            with self.subTest(i):
+                self.assertFalse(is_safe_url(unsafe))
+
+        safe_cases = [
+            "/",
+            "/some/path",
+        ]
+        for i, safe in enumerate(safe_cases):
+            with self.subTest(len(unsafe_cases) + i):
+                self.assertTrue(is_safe_url(safe))
 
     @patch('dojo.models.System_Settings.objects')
     @patch('dojo.utils.Dojo_Group_Member')

@@ -1772,7 +1772,7 @@ def engagement_post_Save(sender, instance, created, **kwargs):
                             url=reverse('view_engagement', args=(engagement.id,)))
 
 
-def is_safe_url(url):
+def is_safe_url(url: str) -> bool:
     try:
         # available in django 3+
         from django.utils.http import url_has_allowed_host_and_scheme
