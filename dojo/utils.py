@@ -1392,9 +1392,7 @@ def process_notifications(request, note, parent_url, parent_title):
         if User.objects.filter(is_active=True, username=username).exists()
     ]
 
-    if len(note.entry) > 200:
-        note.entry = note.entry[:200]
-        note.entry += "..."
+    note.entry = truncate_with_dots(note.entry, 200)
 
     create_notification(
         event='user_mentioned',
@@ -1704,10 +1702,20 @@ def apply_cwe_to_template(finding, override=False):
     return finding
 
 
-def truncate_with_dots(the_string, max_length_including_dots):
-    if not the_string:
+def truncate_with_dots(the_string: str, max_length_including_dots: int) -> str:
+    """
+    If the_string is longer than max_length_including_dots, it is truncated to that length -3 and has "..." appended.
+
+    Raises ValueError if max_length_including_dots < 3, as this wouldn't make sense.
+    """
+    if max_length_including_dots < 3:
+        msg = "max_length_including_dots must be >= 3"
+        raise ValueError(msg)
+
+    if not the_string or len(the_string) <= max_length_including_dots:
         return the_string
-    return (the_string[:max_length_including_dots - 3] + '...' if len(the_string) > max_length_including_dots else the_string)
+
+    return the_string[:max_length_including_dots - 3] + "..."
 
 
 def max_safe(list):

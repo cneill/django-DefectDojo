@@ -22,7 +22,14 @@ from dojo.models import (
     Test_Import,
     Test_Import_Finding_Action,
 )
-from dojo.utils import create_bleached_link, dojo_crypto_encrypt, is_safe_url, prepare_for_view, user_post_save
+from dojo.utils import (
+    create_bleached_link,
+    dojo_crypto_encrypt,
+    is_safe_url,
+    prepare_for_view,
+    truncate_with_dots,
+    user_post_save,
+)
 
 from .dojo_test_case import DojoTestCase
 
@@ -98,6 +105,25 @@ class TestUtils(DojoTestCase):
         for i, safe in enumerate(safe_cases):
             with self.subTest(len(unsafe_cases) + i):
                 self.assertTrue(is_safe_url(safe))
+
+    def test_truncate_with_dots(self):
+        # Expected string, provided string, length
+        test_cases = [
+            ("", "", 5),
+            ("test", "test", 4),
+            ("test...", "test_longer", 7),
+            ("test", "test", 500),
+        ]
+        for i, test_case in enumerate(test_cases):
+            with self.subTest(i):
+                result = truncate_with_dots(test_case[1], test_case[2])
+                self.assertLessEqual(len(result), test_case[2])
+                self.assertEqual(test_case[0], result)
+
+        # Ensure that we can't pass a value < 3 since this doesn't make any sense
+        with self.subTest(len(test_cases)):
+            with self.assertRaises(ValueError):
+                truncate_with_dots("test", 2)
 
     @patch('dojo.models.System_Settings.objects')
     @patch('dojo.utils.Dojo_Group_Member')

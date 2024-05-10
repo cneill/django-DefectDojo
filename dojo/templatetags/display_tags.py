@@ -22,7 +22,7 @@ from django.utils.translation import gettext as _
 import dojo.jira_link.helper as jira_helper
 import dojo.utils
 from dojo.models import Benchmark_Product, Check_List, Dojo_User, FileAccessToken, Finding, Product, System_Settings
-from dojo.utils import get_file_images, get_full_url, get_system_setting, prepare_for_view
+from dojo.utils import get_file_images, get_full_url, get_system_setting, prepare_for_view, truncate_with_dots
 
 logger = logging.getLogger(__name__)
 
@@ -88,21 +88,14 @@ def markdown_render(value):
         return mark_safe(bleach.clean(markdown_text, tags=markdown_tags, attributes=markdown_attrs, css_sanitizer=markdown_styles))
 
 
-def text_shortener(value, length):
-    return_value = str(value)
-    if len(return_value) > length:
-        return_value = return_value[:length] + "..."
-    return return_value
-
-
 @register.filter(name='url_shortener')
 def url_shortener(value):
-    return text_shortener(value, 80)
+    return truncate_with_dots(str(value), 80)
 
 
 @register.filter(name='breadcrumb_shortener')
 def breadcrumb_shortener(value):
-    return text_shortener(value, 15)
+    return truncate_with_dots(str(value), 15)
 
 
 @register.filter(name='get_pwd')

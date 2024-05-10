@@ -42,6 +42,7 @@ from dojo.utils import (
     get_period_counts_legacy,
     get_system_setting,
     get_words_for_field,
+    truncate_with_dots,
 )
 
 logger = logging.getLogger(__name__)
@@ -947,8 +948,7 @@ class CSVExportView(View):
                     endpoint_value += f'{str(endpoint)}; '
                 if endpoint_value.endswith('; '):
                     endpoint_value = endpoint_value[:-2]
-                if len(endpoint_value) > EXCEL_CHAR_LIMIT:
-                    endpoint_value = endpoint_value[:EXCEL_CHAR_LIMIT - 3] + '...'
+                endpoint_value = truncate_with_dots(endpoint_value, EXCEL_CHAR_LIMIT)
                 fields.append(endpoint_value)
 
                 vulnerability_ids_value = ''
@@ -1097,8 +1097,7 @@ class ExcelExportView(View):
                     endpoint_value += f'{str(endpoint)}; \n'
                 if endpoint_value.endswith('; \n'):
                     endpoint_value = endpoint_value[:-3]
-                if len(endpoint_value) > EXCEL_CHAR_LIMIT:
-                    endpoint_value = endpoint_value[:EXCEL_CHAR_LIMIT - 3] + '...'
+                endpoint_value = truncate_with_dots(endpoint_value, EXCEL_CHAR_LIMIT)
                 worksheet.cell(row=row_num, column=col_num, value=endpoint_value)
                 col_num += 1
 

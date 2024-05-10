@@ -9,6 +9,7 @@ from lxml import etree
 
 from dojo.models import Finding, Sonarqube_Issue
 from dojo.notifications.helper import create_notification
+from dojo.utils import truncate_with_dots
 
 from .api_client import SonarQubeAPI
 
@@ -141,10 +142,9 @@ class SonarQubeApiImporter:
                     continue
 
                 issue_type = issue["type"]
-                if len(issue["message"]) > 511:
-                    title = issue["message"][0:507] + "..."
-                else:
-                    title = issue["message"]
+                # This may cause some findings' titles to change by 1 character since the previous logic truncated to
+                # 507 characters instead of 508 like this will
+                title = truncate_with_dots(issue["message"], 511)
                 component_key = issue["component"]
                 line = issue.get("line")
                 rule_id = issue["rule"]
