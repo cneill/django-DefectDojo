@@ -1,12 +1,15 @@
 import os
 import re
 
+from django.test import tag
+
 from .dojo_test_case import DojoTestCase, get_unit_tests_path
 
 basedir = os.path.join(get_unit_tests_path(), '..')
 
 
 class TestParsers(DojoTestCase):
+    @tag("file_existence")
     def test_file_existence(self):
         for parser_dir in os.scandir(os.path.join(basedir, 'dojo', 'tools')):
 
@@ -97,6 +100,7 @@ class TestParsers(DojoTestCase):
                                 read_true = True
                                 i = 0
 
+    @tag("file_existence")
     def test_parser_existence(self):
         for docs in os.scandir(os.path.join(basedir, 'docs', 'content', 'en', 'integrations', 'parsers', 'file')):
             if docs.name not in [
