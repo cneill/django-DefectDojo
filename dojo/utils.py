@@ -235,32 +235,32 @@ def are_urls_equal(url1, url2, fields):
     # For a details description see https://hyperlink.readthedocs.io/en/latest/api.html#attributes
     deduplicationLogger.debug("Check if url %s and url %s are equal in terms of %s.", url1, url2, fields)
     for field in fields:
-        if field == 'scheme':
+        if field == "scheme":
             if url1.scheme != url2.scheme:
                 return False
-        elif field == 'host':
+        elif field == "host":
             if url1.host != url2.host:
                 return False
-        elif field == 'port':
+        elif field == "port":
             if url1.port != url2.port:
                 return False
-        elif field == 'path':
+        elif field == "path":
             if url1.path != url2.path:
                 return False
-        elif field == 'query':
+        elif field == "query":
             if url1.query != url2.query:
                 return False
-        elif field == 'fragment':
+        elif field == "fragment":
             if url1.fragment != url2.fragment:
                 return False
-        elif field == 'userinfo':
+        elif field == "userinfo":
             if url1.userinfo != url2.userinfo:
                 return False
-        elif field == 'user':
+        elif field == "user":
             if url1.user != url2.user:
                 return False
         else:
-            logger.warning('Field ' + field + ' is not supported by the endpoint dedupe algorithm, ignoring it.')
+            logger.warning(f"Field {field} is not supported by the endpoint dedupe algorithm, ignoring it.")
     return True
 
 

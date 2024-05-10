@@ -2,6 +2,8 @@ import logging
 from contextlib import contextmanager
 from unittest.mock import Mock, patch
 
+import hyperlink
+
 from dojo.authorization.roles_permissions import Roles
 from dojo.models import (
     IMPORT_CLOSED_FINDING,
@@ -24,6 +26,7 @@ from dojo.models import (
     Test_Import_Finding_Action,
 )
 from dojo.utils import (
+    are_urls_equal,
     create_bleached_link,
     dojo_crypto_encrypt,
     get_product,
@@ -61,6 +64,44 @@ class TestUtils(DojoTestCase):
         encrypt = dojo_crypto_encrypt(test_input)
         test_output = prepare_for_view(encrypt)
         self.assertEqual(test_input, test_output)
+
+    def test_are_urls_equal(self):
+        fields = ["scheme", "host", "port", "path", "query", "fragment", "userinfo", "user"]
+        base_url = hyperlink.parse("https://myhost.com/")
+        # Various URLs that should not match the above, based on different comparisons
+        unequal_urls = [
+            "http://myhost.com/",
+            "https://myhost2.com/",
+            "https://myhost.com:8080/",
+            "https://myhost.com/path",
+            "https://myhost.com/?query=present&var=blah",
+            "https://myhost.com/#fragment",
+            "https://user:pass@myhost.com/",
+        ]
+        for i, url in enumerate(unequal_urls):
+            with self.subTest(i):
+                comparison = hyperlink.parse(url)
+                self.assertFalse(are_urls_equal(base_url, comparison, fields))
+
+        # Testing that the "user" field compares properly (independent of the "userinfo" field, which comes first)
+        with self.subTest(len(unequal_urls)):
+            self.assertFalse(
+                are_urls_equal(
+                    hyperlink.parse("https://user1:password@myhost.com"),
+                    hyperlink.parse("https://user2:password@myhost.com"),
+                    ["user"],
+                )
+            )
+
+        # TODO: Do we want to make this comparison indifferent to the ordering of query parameters?
+        with self.subTest(len(unequal_urls) + 1):
+            self.assertFalse(
+                are_urls_equal(
+                    hyperlink.parse("https://myhost.com/?query1=test&query2=test"),
+                    hyperlink.parse("https://myhost.com/?query2=test&query1=test"),
+                    fields,
+                )
+            )
 
     def test_create_bleached_link(self):
         # url, title, expected
