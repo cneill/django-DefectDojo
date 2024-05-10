@@ -2246,6 +2246,9 @@ def get_product(obj):
     if isinstance(obj, Product):
         return obj
 
+    msg = "Provided object was not of type Finding, Test, Engagement, or Product"
+    raise TypeError(msg)
+
 
 def prod_name(obj):
     if not obj:

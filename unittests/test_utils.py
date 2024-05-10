@@ -13,6 +13,7 @@ from dojo.models import (
     Dojo_User,
     Endpoint,
     Engagement,
+    Finding,
     Notifications,
     Product,
     Product_Type,
@@ -25,6 +26,7 @@ from dojo.models import (
 from dojo.utils import (
     create_bleached_link,
     dojo_crypto_encrypt,
+    get_product,
     is_safe_url,
     prepare_for_view,
     truncate_with_dots,
@@ -124,6 +126,34 @@ class TestUtils(DojoTestCase):
         with self.subTest(len(test_cases)):
             with self.assertRaises(ValueError):
                 truncate_with_dots("test", 2)
+
+    def test_get_product(self):
+        product = Product()
+        engagement = Engagement(
+            product=product,
+        )
+        test = Test(
+            engagement=engagement,
+        )
+        finding = Finding(
+            test=test,
+        )
+        self.assertEqual(None, get_product(None))
+        self.assertEqual(product, get_product(finding))
+        self.assertEqual(product, get_product(test))
+        self.assertEqual(product, get_product(engagement))
+        self.assertEqual(product, get_product(product))
+        with self.assertRaises(TypeError):
+            get_product({"not": "valid"})
+
+        with self.assertRaises(Test.DoesNotExist):
+            get_product(Finding())
+
+        with self.assertRaises(Engagement.DoesNotExist):
+            get_product(Test())
+
+        with self.assertRaises(Product.DoesNotExist):
+            get_product(Engagement())
 
     @patch('dojo.models.System_Settings.objects')
     @patch('dojo.utils.Dojo_Group_Member')
