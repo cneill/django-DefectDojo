@@ -18,7 +18,8 @@ class ScanImportOptionsTest(APITestCase):
 """
 
     def __del__(self):
-        self.payload['file'].close()
+        if hasattr(self, "payload") and self.payload.get("file"):
+            self.payload['file'].close()
 
     def setUp(self):
         token = Token.objects.get(user__username='admin')
