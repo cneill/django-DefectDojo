@@ -452,6 +452,7 @@ class DojoAPITestCase(APITestCase, DojoTestUtilsMixin):
         token = Token.objects.get(user=testuser)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.client.force_authenticate(user=testuser)
 
     def import_scan(self, payload, expected_http_status_code):
         logger.debug('import_scan payload %s', payload)

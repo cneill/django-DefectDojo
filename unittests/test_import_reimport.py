@@ -1460,6 +1460,7 @@ class ImportReimportTestAPI(DojoAPITestCase, ImportReimportMixin):
         token = Token.objects.get(user=testuser)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.client.force_authenticate(user=testuser)
         # self.url = reverse(self.viewname + '-list')
 
     # Statistics only available in API Response
@@ -1735,6 +1736,7 @@ class ImportReimportTestUI(DojoAPITestCase, ImportReimportMixin):
         token = Token.objects.get(user=testuser)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.client.force_authenticate(user=testuser)
         # self.url = reverse(self.viewname + '-list')
 
         self.client_ui = Client()

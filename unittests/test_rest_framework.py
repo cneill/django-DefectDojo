@@ -364,6 +364,7 @@ class BaseClass:
             token = Token.objects.get(user=testuser)
             self.client = APIClient()
             self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+            self.client.force_authenticate(user=testuser)
             self.url = reverse(self.viewname + '-list')
             self.schema = open_api3_json_schema
 
@@ -1281,6 +1282,7 @@ class FindingMetadataTest(BaseClass.RESTEndpointTest):
         token = Token.objects.get(user=testuser)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.client.force_authenticate(user=testuser)
         self.url = reverse(self.viewname + '-list')
 
         self.current_findings = self.client.get(self.url, format='json').data["results"]
